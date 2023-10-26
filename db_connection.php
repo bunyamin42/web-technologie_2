@@ -1,5 +1,5 @@
 <?php
-function getDbConnection() {
+
 $servername = "localhost";
 $username = "root"; 
 $password = ""; 
@@ -14,5 +14,4 @@ if($connection->connect_error ){
     die("Verbindung fehlgeschlagen: " . $connection->connect_error);
 
 
-}
 }
