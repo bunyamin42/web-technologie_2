@@ -15,16 +15,19 @@
          
          include("db_connection.php");
          if(isset($_POST['submit'])){
-            if($_POST['password'] != $_POST['password2']) {
+            if($_POST['passwort'] != $_POST['passwort2']) {
                 echo "<div class='message'>
                 <p> Passwörte stimmen nicht überein, versuchen Sie es nochmal!</p>
                  </div> <br>";
                  echo "<a href='javascript:self.history.back()'><button class='btn'>Go Back</button>";
             }
             else {
-            $username = $_POST['username'];
+            $benutzername = $_POST['benutzername'];
             $email = $_POST['email'];
-            $password = $_POST['password'];
+            $passwort = $_POST['passwort'];
+            $_SESSION['benutzername'] = $_POST['benutzername'];
+$_SESSION['email'] = $_POST['email'];
+$_SESSION['passwort'] = $_POST['passwort'];
 
          //verifying the unique email
 
@@ -38,7 +41,7 @@
          }
          else{
 
-            mysqli_query($connection,"INSERT INTO benutzer(username,password,email) VALUES('$username','$password','$email')") or die("Error Occured");
+            mysqli_query($connection,"INSERT INTO benutzer(benutzername,passwort,email) VALUES('$benutzername','$passwort','$email')") or die("Error Occured");
 
             echo "<div class='message_success'>
                       <p>Registration successfully!</p>
@@ -55,8 +58,8 @@
             <header>Sign Up</header>
             <form action="" method="post">
                 <div class="field input">
-                    <label id="input-value" for="username">Username</label>
-                    <input type="text" name="username" id="username" autocomplete="off" required>
+                    <label id="input-value" for="benutzername">Benutzername</label>
+                    <input type="text" name="benutzername" id="benutzername" autocomplete="off" required>
                 </div>
 
                 <div class="field input">
@@ -65,13 +68,13 @@
                 </div>
 
                 <div class="field input">
-                    <label id="input-value" for="password">Password</label>
-                    <input type="password" name="password" id="password" autocomplete="off" required>
+                    <label id="input-value" for="passwort">passwort</label>
+                    <input type="passwort" name="passwort" id="passwort" autocomplete="off" required>
                 </div>
 
                 <div class="field input">
-                    <label id="input-value" for="password">Password</label>
-                    <input type="password" name="password2" id="password2" autocomplete="off" required>
+                    <label id="input-value" for="passwort">passwort</label>
+                    <input type="passwort" name="passwort2" id="passwort2" autocomplete="off" required>
                 </div>
 
                 <div class="field">

@@ -14,25 +14,25 @@
       <div class="container">
         <div class="box form-box">
             <?php 
-             
+
               include("db_connection.php");
               if(isset($_POST['submit'])){
                 
                 $email = mysqli_real_escape_string($connection,$_POST['email']);
-                $password = mysqli_real_escape_string($connection,$_POST['password']);
+                $passwort = mysqli_real_escape_string($connection,$_POST['passwort']);
 
-                $result = mysqli_query($connection,"SELECT * FROM benutzer WHERE email='$email' AND Password='$password' ") or die("Error, not correct");
+                $result = mysqli_query($connection,"SELECT * FROM benutzer WHERE email='$email' AND passwort='$passwort' ") or die("Error, not correct");
                 $row = mysqli_fetch_assoc($result);
 
                 if(is_array($row) && !empty($row)){
                     $_SESSION['email'] = $row['email'];
-                    $_SESSION['username'] = $row['username'];
+                    $_SESSION['benutzername'] = $row['benutzername'];
                     $_SESSION['user_id'] = $row['user_id'];
                     
                     header("Location: startseite.php");
                 }else{
                     echo "<div class='message'>
-                      <p>Falscher Username oder Passwort, versuche es nochmal!</p>
+                      <p>Falscher benutzername oder Passwort, versuche es nochmal!</p>
                        </div> <br>";
                    echo "<a href='login.php'><button class='btn'>Go Back</button>";
          
@@ -47,16 +47,16 @@
             <header>Login</header>
             <form action="" method="post">
                 <div class="field input">
-                    <label id="input-value" for="email">Email</label>
-                    <input  type="text" name="email" id="email" autocomplete="off" required>
+                    <label id="input-value" for="email" >Email</label>
+                    <input  type="text" name="email" id="email" autocomplete="off"  required>
                 </div>
 
                 <div class="field input">
-                    <label id="input-value" for="password">Password</label>
-                    <input type="password" name="password" id="password" autocomplete="off" required>
+                    <label id="input-value" for="passwort">passwort</label>
+                    <input type="passwort" name="passwort" id="passwort" autocomplete="off" required>
                 </div>
 
-                <div class="field">
+                <div class="field"> 
                     
                     <input type="submit" class="btn" name="submit" value="Login" required>
                 </div>

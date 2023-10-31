@@ -89,6 +89,8 @@ body{
 
 /*** Startseite Syle ***/
 
+
+
 .nav{
     background: #fff;
     display: flex;
@@ -164,20 +166,30 @@ main{
 
 
 nav {
-    background-color: #333;
-    color: white;
+    background-color: #383838;
+    color: rgb(255, 255, 255);
     padding: 10px;
+}
+
+.menuleiste > a {
+    color: white;
+    text-decoration: none;
+   display: inline-block;
+   justify-content: center;
 }
 
 nav ul {
     list-style-type: none;
     margin: 0;
     padding: 0;
+
+
 }
 
 nav ul li {
     display: inline;
     margin-right: 10px;
+
 }
 
 #post-formular {
