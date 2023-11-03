@@ -1,0 +1,16 @@
+[
+    {
+        "Benutzer": "test",
+        "Inhalt": "Hallo wie gehts dir",
+        "Autor": "test",
+        "Likes": "0",
+        "Kommentare": []
+    },
+    {
+        "Benutzer": "test",
+        "Inhalt": "lalalala",
+        "Autor": "test",
+        "Likes": "0",
+        "Kommentare": []
+    }
+]

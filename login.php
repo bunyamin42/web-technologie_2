@@ -53,7 +53,7 @@
 
                 <div class="field input">
                     <label id="input-value" for="passwort">passwort</label>
-                    <input type="passwort" name="passwort" id="passwort" autocomplete="off" required>
+                    <input type="password" name="passwort" id="passwort" autocomplete="off" required>
                 </div>
 
                 <div class="field"> 
@@ -61,8 +61,12 @@
                     <input type="submit" class="btn" name="submit" value="Login" required>
                 </div>
                 <div class="links">
-                    Don't have an account? <a href="register.php"> Sign Up Now</a>
+                    Don't have an account? <a href="register.php"> Sign Up Now <br/></a>
+                    <a href="passwort_vergessen.php">Passwort vergessen?</a>
                 </div>
+                
+</div>
+
             </form>
         </div>
         <?php } ?>

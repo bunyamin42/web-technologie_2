@@ -69,12 +69,12 @@ $_SESSION['passwort'] = $_POST['passwort'];
 
                 <div class="field input">
                     <label id="input-value" for="passwort">passwort</label>
-                    <input type="passwort" name="passwort" id="passwort" autocomplete="off" required>
+                    <input type="password" name="passwort" id="passwort" autocomplete="off" required>
                 </div>
 
                 <div class="field input">
                     <label id="input-value" for="passwort">passwort</label>
-                    <input type="passwort" name="passwort2" id="passwort2" autocomplete="off" required>
+                    <input type="password" name="passwort2" id="passwort2" autocomplete="off" required>
                 </div>
 
                 <div class="field">

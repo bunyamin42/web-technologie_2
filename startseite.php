@@ -2,7 +2,6 @@
 include("db_connection.php");
 session_start();
 
-
 // Benutzername und E-Mail aus der Session holen und bereinigen
 $benutzername = mysqli_real_escape_string($connection, $_SESSION['benutzername']);
 $email = mysqli_real_escape_string($connection, $_SESSION['email']);
@@ -26,7 +25,7 @@ function speichereBeitragDatenbank($contentBeitrag)
 
     // SQL-Abfrage zum Einfügen des Beitrags in die Datenbank
     $sql = "INSERT INTO beitrag (inhalt, likes, veröffentlichungsdatum, fk_benutzer_id)
-    VALUES ('$contentBeitrag', 0, NOW(), $benutzerId)";
+            VALUES ('$contentBeitrag', 0, NOW(), $benutzerId)";
 
     // Die SQL-Abfrage ausführen
     $result = mysqli_query($connection, $sql);
@@ -35,9 +34,11 @@ function speichereBeitragDatenbank($contentBeitrag)
     if ($result) {
         echo "success";
     } else {
-        echo "error";
+        // Gib den genauen Fehler zurück, um das Debuggen zu erleichtern
+        echo "error: " . mysqli_error($connection);
     }
 }
+
 ?>
 
 <!DOCTYPE html>
@@ -57,8 +58,13 @@ function speichereBeitragDatenbank($contentBeitrag)
             <li><a href="#">Freunde</a></li>
         </ul>
     </nav>
+    <div class="logout">
+        <a href="logout.php">Abmelden</a>
+    </div>
 
-    <div id="post-formular">
+    <button id="beitrag-erstellen-button" onclick="anzeigenBeitragFormular()">Beitrag erstellen</button>
+
+    <div id="post-formular" style="display: none;">
         <form id="posten-form">
             <textarea id="post-text" placeholder="Schreibe deinen Beitrag..."></textarea>
             <button type="button" onclick="posten()">Push</button>
@@ -68,6 +74,7 @@ function speichereBeitragDatenbank($contentBeitrag)
     <div id="beitraege">
         <!-- Hier werden die Beiträge angezeigt -->
     </div>
+
 
     <script>
         // Simuliere eine Datenbank für bereits gelikte Beiträge
@@ -105,10 +112,12 @@ function speichereBeitragDatenbank($contentBeitrag)
             // Füge den Beitrag zur Seite hinzu
             beitragDiv.appendChild(beitrag);
             
+            
         }
 
         function zeigeBeiträge() {
             // Stelle eine AJAX-Anfrage, um die Beiträge abzurufen
+            console.log("zeigeBeiträge() wurde aufgerufen");
             var xhr = new XMLHttpRequest();
             xhr.onreadystatechange = function() {
                 if (xhr.readyState == 4 && xhr.status == 200) {
@@ -158,8 +167,11 @@ function speichereBeitragDatenbank($contentBeitrag)
                         // Erfolgreiche Anfrage, zeige eine Erfolgsmeldung
                         if (xhr.responseText === "success") {
                             alert("Ihr Beitrag wurde erfolgreich gepostet!");
+                            zeigeBeiträge(); // Zeige die Beiträge nur bei erfolgreichem Beitrag
+                            
                         } else {
                             // Fehler beim Einfügen des Beitrags
+                            
                             alert("Fehler beim Einfügen des Beitrags. Bitte versuchen Sie es erneut.");
                         }
                     } else {
@@ -170,16 +182,79 @@ function speichereBeitragDatenbank($contentBeitrag)
             };
 
             // Konfiguriere die AJAX-Anfrage für POST
-            xhr.open("POST", "startseite.php", true);
+            xhr.open("POST", "alle_beitraege_anzeigen.php", true);
             xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 
             // Sende die Daten an das PHP-Skript
             xhr.send("contentBeitrag=" + encodeURIComponent(contentBeitrag));
         }
 
+
+        function klappeKommentare(button) {
+            var kommentarBereich = button.parentElement.nextElementSibling;
+            var kommentare = kommentarBereich.querySelector('.kommentare');
+
+            if (kommentare.style.display === "none") {
+                kommentare.style.display = "block";
+            } else {
+                kommentare.style.display = "none";
+            }
+        }
+        function liken(button) {
+            var beitrag = button.closest('.beitrag');
+            var likeButton = beitrag.querySelector('.anzahl-likes');
+
+            // Überprüfe, ob der Beitrag bereits geliked wurde
+            if (!beitragGeliked(beitrag)) {
+                // Hier kannst du die Logik hinzufügen, um Likes zu verarbeiten
+                // Beispiel: Aktualisiere den Like-Button oder sende eine Anfrage an den Server
+                var anzahlLikes = parseInt(likeButton.textContent);
+                likeButton.textContent = (anzahlLikes + 1) + ' Likes';
+                // Füge den Beitrag zur Liste der gelikten Beiträge hinzu
+                gelikteBeitraege.push(beitrag);
+            } else {
+                alert('Du hast diesen Beitrag bereits geliked.');
+            }
+        }
+        function kommentarPosten(button, benutzer, beitragText) {
+            var kommentarBereich = button.parentElement;
+            var kommentarText = kommentarBereich.querySelector('textarea').value;
+            var kommentarListe = kommentarBereich.querySelector('.kommentare');
+
+            if (kommentarText.trim() !== "") {
+                var kommentar = document.createElement("div");
+                kommentar.className = "kommentar";
+                kommentar.innerHTML = "<p>Benutzer: " + benutzer + "</p><p>Kommentar: " + kommentarText + "</p>";
+                kommentarListe.appendChild(kommentar);
+                
+                // Leere das Textarea-Feld nach dem Posten des Kommentars
+                kommentarBereich.querySelector('textarea').value = "";
+            } else {
+                alert('Bitte geben Sie einen Kommentar ein.');
+            }
+        }
+
+        // Überprüfe, ob der Beitrag bereits geliked wurde
+        function beitragGeliked(beitrag) {
+            return gelikteBeitraege.includes(beitrag);
+        }
+
         window.onload = function () {
             zeigeBeiträge();
         };
+
+        function anzeigenBeitragFormular() {
+            var formular = document.getElementById("post-formular");
+            var button = document.getElementById("beitrag-erstellen-button");
+
+            if (formular.style.display === "none") {
+                formular.style.display = "block";
+                button.innerText = "Beitrag schließen";
+            } else {
+                formular.style.display = "none";
+                button.innerText = "Beitrag erstellen";
+            }
+        }
 
     </script>
 

@@ -1,4 +1,10 @@
 <?php
+
+
+
+
+
+
 include("db_connection.php");
 session_start();
 $benutzername = $_SESSION['benutzername'];
@@ -19,7 +25,7 @@ if ($connection->connect_error) {
 
 // SQL-Abfrage erstellen, um alle Beiträge von Freunden und eigene Beiträge anzuzeigen
 $sql_beiträge = "
-    SELECT b.*, u.benutzername as autor
+    SELECT DISTINCT b.*, u.benutzername as autor
     FROM beitrag b
     JOIN freundschaft f ON (b.fk_benutzer_id  = f.fk_benutzer_id1 OR b.fk_benutzer_id = f.fk_benutzer_id2)
     JOIN benutzer u ON b.fk_benutzer_id = u.benutzer_id
