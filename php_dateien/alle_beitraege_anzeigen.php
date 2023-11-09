@@ -1,12 +1,9 @@
 <?php
 
-
-
-
-
-
 include("db_connection.php");
-session_start();
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
 $benutzername = $_SESSION['benutzername'];
 
 // Die benutzer_id vom Benutzer herausfinden, und in Session speichern

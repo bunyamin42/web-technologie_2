@@ -1,9 +1,11 @@
 <?php
-session_start();
+   if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
 include("db_connection.php");
 
 // Überprüfen, ob ein Token in der URL vorhanden ist
-if (isset($_GET['token'])) {
+if (isset($_GET['token'])) {    
     $token = $_GET['token'];
 
     // Überprüfen, ob das Token in der Datenbank vorhanden ist
