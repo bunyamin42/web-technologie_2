@@ -32,6 +32,22 @@ body{
     width: 460px;
     margin: 0px 15px;
 }
+.box {
+    margin: 30px;
+    background: #ece9e9;
+    outline: none;
+}
+.form-header{
+    margin: -30px -30px 20px;
+    padding: 30px 30px 10px;
+    text-align: center;
+    background: #818181;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    border-bottom: 1px solid #eee;
+    color: #fff;
+
+}
 .form-box header{
     font-size: 27px;
     font-weight: 600;

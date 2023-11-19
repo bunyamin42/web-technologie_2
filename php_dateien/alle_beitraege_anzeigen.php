@@ -6,7 +6,7 @@ if (session_status() == PHP_SESSION_NONE) {
 }
 $benutzername = $_SESSION['benutzername'];
 
-// Die benutzer_id vom Benutzer herausfinden, und in Session speichern
+// Die benutzer_id vom Benutzer herausfinden, und in der Session speichern
 $sql_benutzerid = "SELECT benutzer_id, benutzername FROM benutzer WHERE benutzername = '$benutzername'";
 
 $result = mysqli_query($connection, $sql_benutzerid);
@@ -18,6 +18,24 @@ $_SESSION['benutzername'] = $row['benutzername'];
 // Verbindung überprüfen
 if ($connection->connect_error) {
     die("Verbindung fehlgeschlagen: " . $connection->connect_error);
+}
+
+// SQL-Abfrage für Likes zählen und in der Tabelle 'beitrag' aktualisieren
+$sql_update_likes = "
+    UPDATE beitrag b
+    SET b.likes = (
+        SELECT COUNT(l.like_id)
+        FROM liked_beitraege l
+        WHERE l.fk_beitrag_id = b.beitrag_id
+    )
+";
+
+// SQL-Abfrage ausführen, um Likes zu aktualisieren
+$result_update_likes = mysqli_query($connection, $sql_update_likes);
+
+// Überprüfen, ob die Aktualisierung erfolgreich war
+if ($result_update_likes === FALSE) {
+    die("Likes-Aktualisierung fehlgeschlagen: " . $connection->error);
 }
 
 // SQL-Abfrage erstellen, um alle Beiträge von Freunden und eigene Beiträge anzuzeigen
