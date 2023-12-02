@@ -68,7 +68,7 @@ if (!isset($_SESSION['email'])) {
                             <td style="font-weight: bold;">Profilbild entfernen</td>
                             <td><input type="submit" name="delete_image" class="btn btn-secondary" value="Bild löschen" onclick="zeigeErfolgsmeldung()"></td>
                         </tr>
-                        
+
                         <tr>
                             <td style="font-weight: bold;">Email ändern</td>
                             <td>
@@ -185,12 +185,9 @@ if (!isset($_SESSION['email'])) {
 
                     if (@file_exists($imageToDelete)) {
                         @unlink($imageToDelete);
-                         $sql_update_image = "UPDATE benutzer SET user_profil=NULL WHERE benutzer_id='$user_id'";
-                    mysqli_query($connection, $sql_update_image);
+                        $sql_update_image = "UPDATE benutzer SET user_profil=NULL WHERE benutzer_id='$user_id'";
+                        mysqli_query($connection, $sql_update_image);
                     }
-
-                    
-                   
                 }
 
                 if (isset($_POST['update'])) {
@@ -242,7 +239,6 @@ if (!isset($_SESSION['email'])) {
             function zeigeErfolgsmeldung() {
                 alert("Profilbild erfolgreich gelöscht");
             }
-
         </script>
     </body>
 

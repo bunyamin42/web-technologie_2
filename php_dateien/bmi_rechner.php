@@ -2,10 +2,12 @@
 <html lang="en">
 
 <head>
+    
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BMI Rechner</title>
     <style>
+        
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #f4f4f4;
@@ -74,6 +76,7 @@
 </head>
 
 <body>
+
     <div id="calculator">
         <h2>BMI Rechner</h2>
         <form id="bmiForm">

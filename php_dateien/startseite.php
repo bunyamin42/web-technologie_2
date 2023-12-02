@@ -19,6 +19,7 @@ if (!isset($_SESSION['email'])) {
         <meta charset="UTF-8">
         <title>Fitbook</title>
         <link rel="stylesheet" href="../style.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     </head>
 
     <body>
@@ -45,9 +46,9 @@ if (!isset($_SESSION['email'])) {
                     </script>
                 </div>
                 <div class="logout">
-                    
-                        <span id="logoutText" class="logout-text">Abmelden</span>
-                        <img src="../images/abmelden_icon.png" id="abmelde_icon">
+
+                    <span id="logoutText" class="logout-text">Abmelden</span>
+                    <img src="../images/abmelden_icon.png" id="abmelde_icon">
                     </a>
                     <script>
                         document.getElementById("abmelde_icon").addEventListener("click", function() {
@@ -63,9 +64,11 @@ if (!isset($_SESSION['email'])) {
             <div class="left-sidebar">
                 <div class="imp-links">
                     <a href="#"><img src="../images/wochenplan_icon.png">Mein Wochenplan</a>
-                    <a href="#"><img src="../images/freunde_icon.png">Freunde</a>
+                    <a href="freunde.php"><img src="../images/freunde_icon.png">Freunde</a>
                     <a href=" #"><img src="../images/wochenplanersteller_icon.png">Wochenplanerstellen</a>
                     <a href="#"><img src="../images/kalorien_icon.png">Kalorienrechner</a>
+                    <a href="bmi_rechner.php"><i style="color: black; padding-left:2px; padding-right:12px; font-size: 20px " class="fa-solid fa-dumbbell"></i> BMI Rechner</a>
+                    
 
                 </div>
             </div>
@@ -74,17 +77,14 @@ if (!isset($_SESSION['email'])) {
             <!-- HTML für Toast-Benachrichtigung -->
 
             <div class="toast" id="toast"></div>
-            <form action="alle_beitraege_anzeigen.php" method="get">
+            <form id="filter-form" action="alle_beitraege_anzeigen.php" method="post">
                 <label for="sortierung">Sortieren nach:</label>
                 <select name="sortierung" id="sortierung">
                     <option value="aufsteigend">Aufsteigend</option>
                     <option value="absteigend">Absteigend</option>
                 </select>
 
-                <label for="benutzername">Benutzername filtern:</label>
-                <input type="text" name="benutzername" id="benutzername">
-
-                <input type="submit" value="Filter anwenden">
+                <button type="button" onclick="applyFilter()">Filter anwenden</button>
             </form>
 
             <div class="main-content">
@@ -189,8 +189,17 @@ if (!isset($_SESSION['email'])) {
 
             }
 
-            function zeigeBeiträge() {
+          function applyFilter() {
+        var form = document.getElementById("filter-form");
+        var sortierungValue = form.elements["sortierung"].value;
+        console.log("Sortierung testen applyfilter:", sortierungValue);
+        zeigeBeiträge(sortierungValue);
+    }
+
+
+            function zeigeBeiträge(sortierungValue = null) {
                 // Stelle eine AJAX-Anfrage, um die Beiträge abzurufen
+                console.log("Sortierung testen zeigeBeiträge:", sortierungValue);
                 var xhr = new XMLHttpRequest();
                 xhr.onreadystatechange = function() {
                     if (xhr.readyState == 4 && xhr.status == 200) {
@@ -203,7 +212,7 @@ if (!isset($_SESSION['email'])) {
                     }
                 };
                 xhr.open("POST", "alle_beitraege_anzeigen.php", true);
-                xhr.send();
+                xhr.send("sortierung=" + encodeURIComponent(sortierungValue));
             }
 
             function ladeKommentare() {
@@ -222,7 +231,7 @@ if (!isset($_SESSION['email'])) {
             }
 
             function anzeigenKommentare(kommentare) {
-                console.log("Kommentare:", kommentare);
+               
 
                 for (var i = 0; i < kommentare.length; i++) {
                     var kommentar = kommentare[i];

@@ -47,6 +47,7 @@ if (!isset($_SESSION['email'])) {
                         $row = mysqli_fetch_array($run_user);
                         $user_id = $row['benutzer_id'];
                         $user_name = $row['benutzername'];
+                        $user_profile_image = isset($row['user_profil']) ? $row['user_profil'] : 'images_profile\avatar-1295399_640.png.70.jpg';
                         ?>
                         <!--- getting the user data on which user click -->
                         <?php
@@ -57,7 +58,7 @@ if (!isset($_SESSION['email'])) {
                             $run_user = mysqli_query($connection, $get_user);
                             $row_user = mysqli_fetch_array($run_user);
                             $username = $row_user['benutzername'];
-                            $user_profile_image = $row_user['user_profil'];
+                            $user_profile_image = isset($row_user['user_profil']) ? $row_user['user_profil'] : 'images_profile\avatar-1295399_640.png.70.jpg';
                         }
                         $total_messages = "select * from users_chat where (sender_username='$user_name' AND receiver_username='$username') OR (receiver_username='$user_name' AND sender_username='$username')";
 

@@ -6,6 +6,7 @@ if (session_status() == PHP_SESSION_NONE) {
 }
 $benutzername = $_SESSION['benutzername'];
 
+
 // Die benutzer_id vom Benutzer herausfinden, und in der Session speichern
 $sql_benutzerid = "SELECT benutzer_id, benutzername FROM benutzer WHERE benutzername = '$benutzername'";
 
@@ -46,8 +47,18 @@ $sql_beiträge = "
     JOIN benutzer u ON b.fk_benutzer_id = u.benutzer_id
     WHERE f.status = 1  -- Annahme: Status 1 bedeutet Freundschaft akzeptiert
     AND (f.fk_benutzer_id1 = {$_SESSION['benutzer_id']} OR f.fk_benutzer_id2 = {$_SESSION['benutzer_id']})
-    ORDER BY b.veröffentlichungsdatum DESC;
-";
+    ORDER BY b.veröffentlichungsdatum DESC";
+
+    
+// Füge basierend auf der Benutzerauswahl die Sortierung hinzu
+if (isset($_POST['sortierung'])) {
+    if ($_POST['sortierung'] == 'aufsteigend') {
+        $sql_beiträge .= " ASC";
+    } elseif ($_POST['sortierung'] == 'absteigend') {
+        $sql_beiträge .= " DESC";
+    }
+}
+
 
 // SQL-Abfrage ausführen
 $result_beiträge =  mysqli_query($connection, $sql_beiträge);

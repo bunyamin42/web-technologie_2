@@ -1,84 +1,126 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
-    <title>OpenAI API Aufruf und Feedback</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Essenplan Generator</title>
+  <style>
+    /* Add your styles for a better-looking form here */
+  </style>
 </head>
-<body>
-    <h1>OpenAI API Aufruf und Feedback</h1>
 
-    <form method="post">
-        <label for="prompt">Geben Sie Ihren Prompt ein:</label><br>
-        <textarea id="prompt" name="prompt" rows="4" cols="50"></textarea><br><br>
-        <input type="submit" value="Generieren">
+
+
+  <div id="buttonsContainer" style="display: none;">
+    <button type="button" onclick="get_json_mealplan()">Essensplan speichern</button>
+    <button type="button" onclick="generateNewPlan()">Neuen Plan erstellen</button>
+  </div>
+
+  <div id="formContainer">
+    <h1>Essenplan Generator</h1>
+
+    <form id="mealPlanForm">
+      <label for="targetCalories">Zielkalorien:</label>
+      <input type="number" id="targetCalories" name="targetCalories" required>
+
+      <label for="diet">Diät:</label>
+      <select id="diet" name="diet">
+        <option value="">Keine Auswahl</option>
+        <option value="gluten free">Glutenfrei</option>
+        <option value="vegetarian">Vegetarisch</option>
+        <option value="vegan">Vegan</option>
+      </select>
+
+      <label for="exclude">Ausschließen (Zutaten durch Komma getrennt):</label>
+      <input type="text" id="exclude" name="exclude">
+
+      <button type="button" onclick="generateMealPlan()">Essensplan generieren</button>
     </form>
+  </div>
 
-    <?php
-    if ($_SERVER["REQUEST_METHOD"] == "POST") {
-        $prompt = $_POST["prompt"];
-        if (!empty($prompt)) {
-            $api_key = "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"; // Ihren OpenAI API-Schlüssel hier einfügen
-            $endpoint = "https://api.openai.com/v1/chat/completions";
-            $response = getAPIResponse($prompt, $endpoint, $api_key);
-            echo "<h2>Antwort</h2>";
-            echo $response;
-        } else {
-            echo "Bitte geben Sie einen Prompt ein.";
+  <div id="mealPlanResult" style="display: none;">
+    <!-- Hier wird der Wochenplan angezeigt -->
+  </div>
+
+  <script>
+    function generateMealPlan() {
+
+      var formData = new FormData(document.getElementById("mealPlanForm"));
+
+      // AJAX request to myfitnesspal.php
+      var xhr = new XMLHttpRequest();
+      xhr.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+
+          document.getElementById("mealPlanResult").innerHTML = this.responseText;
+
+          document.getElementById("buttonsContainer").style.display = "block";
+
+          // Button verstecken
+          document.getElementById("formContainer").style.display = "none";
+          document.getElementById("mealPlanResult").style.display = "block";
         }
+      };
+
+      xhr.open("POST", "myfitnesspal.php", true);
+      xhr.send(formData);
     }
 
-    function getAPIResponse($prompt, $endpoint, $api_key) {
-        // Initialisiere die cURL-Sitzung
-        $ch = curl_init($endpoint);
-    
-        // Setze cURL-Optionen
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-            "Authorization: Bearer $api_key",
-            "Content-Type: application/json"
-        ));
-    
-        // Nutzlast für den Chat-Eingang unter Verwendung der Nachrichtenstruktur
-        $data = array(
-            'model' => 'gpt-3.5-turbo',
-            'messages' => array(
-                array('role' => 'system', 'content' => 'Sie sind ein hilfreicher Assistent.'),
-                array('role' => 'user', 'content' => $prompt)
-            )
-        );
-        $data_string = json_encode($data);
-    
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
-    
-        // Führe die cURL-Sitzung aus
-        $response = curl_exec($ch);
-    
-        // Überprüfe auf cURL-Fehler
-        if(curl_errno($ch)){
-            echo 'Curl-Fehler: ' . curl_error($ch);
-            exit;
-        }
-    
-        // Dekodiere die Antwort
-        $response_data = json_decode($response, true);
-    
-        // Überprüfe, ob der Schlüssel 'choices' in der Antwort vorhanden ist und ob der Nachrichteninhalt vorhanden ist
-        if (!isset($response_data['choices']) || !isset($response_data['choices'][0]['message']['content'])) {
-            echo "Fehler: Unerwartete API-Antwort.<br>";
-            echo "Vollständige Antwort:<br>";
-            print_r($response_data);
-            exit;
-        }
-    
-        // Hole die Antwort aus der API-Antwort
-        $answer = $response_data['choices'][0]['message']['content'];
-    
-        // Schließe die cURL-Sitzung
-        curl_close($ch);
-    
-        return $answer;
+    // Globale Variable für die Meal Plan Daten
+    var mealPlanData;
+
+    // AJAX-Anfrage zum Speichern des Essensplans
+    function saveMealPlan() {
+  // Erhalte den Wochenplan-Daten als JSON-String
+  var mealPlanDataToSave = mealPlanData;
+  console.log("Daten", mealPlanDataToSave); 
+
+  var xhr = new XMLHttpRequest();
+  xhr.onreadystatechange = function() {
+    console.log("Ready state: " + this.readyState);
+    console.log("Status: " + this.status);
+    if (this.readyState == 4 && this.status == 200) {
+      // Zeige die Antwort (z.B., Erfolgsmeldung) an
+      alert("Erfolgreich gespeichert");
     }
-    
-    ?>
+  };
+
+  xhr.open("POST", "saveMealPlan.php", true);
+  xhr.setRequestHeader("Content-type", "application/json");
+  xhr.send(JSON.stringify(mealPlanDataToSave));
+
+}
+
+
+    function generateNewPlan() {
+      // Show the form and hide the result
+      document.getElementById("formContainer").style.display = "block";
+      document.getElementById("mealPlanResult").style.display = "none";
+
+      // Hide the buttons container
+      document.getElementById("buttonsContainer").style.display = "none";
+    }
+
+    function get_json_mealplan() {
+      var xhr = new XMLHttpRequest()
+      xhr.onreadystatechange = function() {
+        console.log("Ready state: " + this.readyState);
+        console.log("Status: " + this.status);
+        if (this.readyState == 4 && this.status == 200) {
+          // Die global deklarierte Variable aktualisieren
+          mealPlanData = JSON.parse(this.responseText);
+          console.log("Meal Plan Data:", mealPlanData);
+          // Die Funktion saveMealPlan aufrufen
+          saveMealPlan();
+        }
+      };
+
+      xhr.open("GET", "ausgabe_essenplan.php", true);
+      xhr.send();
+    }
+  </script>
+
 </body>
+
 </html>
