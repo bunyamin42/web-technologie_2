@@ -1,5 +1,11 @@
 <?php 
+
 session_start();
+
+if (!isset($_SESSION['email'])) {
+    header("location: login.php");
+} else {
+
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
     header('Content-Type: application/json');
@@ -12,5 +18,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     
     exit;
 }
-
+}
 ?>

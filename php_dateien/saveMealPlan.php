@@ -1,5 +1,10 @@
 <?php
-include("php_dateien/db_connection.php");
+
+if (!isset($_SESSION['email'])) {
+    header("location: login.php");
+} else {
+
+include("db_connection.php");
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $user_id = 34;
@@ -37,5 +42,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 } else {
     // Ausgabe einer Fehlermeldung, wenn keine POST-Anfrage
     echo "Fehler: Keine POST-Anfrage.";
+}
+
 }
 ?>

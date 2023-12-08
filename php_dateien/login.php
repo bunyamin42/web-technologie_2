@@ -1,7 +1,19 @@
 <?php 
-      if (session_status() == PHP_SESSION_NONE) {
+    if (session_status() == PHP_SESSION_NONE) {
         session_start();
     }
+
+    // 1. Überprüfen Sie, ob das Cookie vorhanden ist.
+    date_default_timezone_set('Europe/Berlin'); // Setzen Sie die entsprechende Zeitzone
+
+$cookie_name = "user_cookie";
+if (isset($_COOKIE[$cookie_name]) && time() < $_COOKIE[$cookie_name]) {
+    // Cookie ist noch gültig, leiten Sie den Benutzer zur Startseite weiter.
+    header("Location: startseite.php");
+    exit();
+}
+
+
 ?>
 <!DOCTYPE html>
 <html lang="de">
@@ -22,19 +34,30 @@
         <div class="box form-box">
             <?php 
                 include("db_connection.php");
-                if(isset($_POST['submit'])){
-                    $email = mysqli_real_escape_string($connection,$_POST['email']);
-                    $passwort = mysqli_real_escape_string($connection,$_POST['passwort']);
-                    $result = mysqli_query($connection,"SELECT * FROM benutzer WHERE email='$email' AND passwort='$passwort' ") or die("Error, not correct");
+                if (isset($_POST['submit'])) {
+                    include("db_connection.php");
+                    $email = mysqli_real_escape_string($connection, $_POST['email']);
+                    $passwort = mysqli_real_escape_string($connection, $_POST['passwort']);
+                    $result = mysqli_query($connection, "SELECT * FROM benutzer WHERE email='$email' AND passwort='$passwort' ") or die("Error, not correct");
                     $row = mysqli_fetch_assoc($result);
-
-                    if(is_array($row) && !empty($row)){
+                
+                    if (is_array($row) && !empty($row)) {
+                        // Update last activity and set log_in to 'Online'
+                        $update_last_activity = "UPDATE benutzer SET last_activity = NOW(), log_in = 'Online' WHERE benutzer_id = {$row['benutzer_id']}";
+                        mysqli_query($connection, $update_last_activity);
+                
                         $_SESSION['email'] = $row['email'];
                         $_SESSION['benutzername'] = $row['benutzername'];
                         $_SESSION['user_id'] = $row['benutzer_id'];
-                        
+                
+                        $cookie_name = "user_cookie";
+                        $cookie_value = $row['benutzer_id'];
+                        $expiration_time = time() + (20 * 60); //Aktuelle Zeit + 20 Minuten, heißt, nach 20 Minuten soll Cookie gelöscht werden
+                        setcookie($cookie_name, $cookie_value, $expiration_time, "/");
+                
                         header("Location: startseite.php");
-                    }else{
+                        exit(); // Fügen Sie dies hinzu, um sicherzustellen, dass der Code nach dem Header nicht weiter ausgeführt wird
+                    } else {
                         echo "<div class='message'>
                                 <p>Falscher Benutzername oder Passwort, versuche es nochmal!</p>
                               </div> <br>";
@@ -50,12 +73,12 @@
             <form action="" method="post">
                 <div class="field input">
                     <label id="input-value" for="email" >Email</label>
-                    <input  type="text" name="email" id="email" placeholder="someone@hotmail.de" autocomplete="off"  required>
+                    <input  type="email" name="email" id="email" placeholder="someone@hotmail.de" autocomplete="on"  required>
                 </div>
 
                 <div class="field input">
                     <label id="input-value" for="passwort">Passwort</label>
-                    <input type="password" name="passwort" id="passwort"  placeholder="Passwort" autocomplete="off" required>
+                    <input type="password" name="passwort" id="passwort"  placeholder="Passwort" autocomplete="current-password" required>
                 </div>
                 <div class="small">Forgot password? <a href="forgot_pass.php"> Click Here</a></div><br>
                 <div class="field"> 

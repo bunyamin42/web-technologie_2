@@ -53,6 +53,7 @@ if (!isset($_SESSION['email'])) {
                     <script>
                         document.getElementById("abmelde_icon").addEventListener("click", function() {
                             window.location.href = "logout.php";
+                            
                         });
                     </script>
                 </div>
@@ -63,9 +64,9 @@ if (!isset($_SESSION['email'])) {
             <!-------------------left sidebar ------------------->
             <div class="left-sidebar">
                 <div class="imp-links">
-                    <a href="#"><img src="../images/wochenplan_icon.png">Mein Wochenplan</a>
+                    <a href="mein_wochenplan.php"><img src="../images/wochenplan_icon.png">Mein Wochenplan</a>
                     <a href="freunde.php"><img src="../images/freunde_icon.png">Freunde</a>
-                    <a href=" #"><img src="../images/wochenplanersteller_icon.png">Wochenplanerstellen</a>
+                    <a href="essenplangenerator.php"><img src="../images/wochenplanersteller_icon.png">Wochenplanerstellen</a>
                     <a href="#"><img src="../images/kalorien_icon.png">Kalorienrechner</a>
                     <a href="bmi_rechner.php"><i style="color: black; padding-left:2px; padding-right:12px; font-size: 20px " class="fa-solid fa-dumbbell"></i> BMI Rechner</a>
                     

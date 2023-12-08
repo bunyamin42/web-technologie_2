@@ -20,6 +20,12 @@ if (!isset($_SESSION['email'])) {
 
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+    .main-section {
+        height: 100vh; /* 100% der Bildschirmhöhe */
+        overflow-y: hidden; /* Verhindert vertikales Scrollen */
+    }
+</style>
     </head>
 
     <body>
@@ -69,14 +75,19 @@ if (!isset($_SESSION['email'])) {
 
                         <div class="col-md-12 right-header">
                             <div class="right-header-img">
-                            <img src=<?php echo"$user_profile_image"; ?>> 
+                                <img src=<?php echo "$user_profile_image"; ?>>
                             </div>
                             <div class="right-header-detail">
                                 <form method="post">
-                                    <p><?php echo "$username"; ?></p>
-                                    <span style="color: white;"><?php echo $total; ?> Nachrichten</span>&nbsp;&nbsp;
-                                    <button style="float: right;" name="logout" class="btn btn-danger">Chat verlassen</button>
+                                    <p><?php echo "$user_name"; ?></p>
+                                    <span style="color: white;"><?php echo $total; ?> Nachrichten</span>
+                                    <div style="float: right; padding-right: 10px;">
+                                        <button name="chat_verlassen" class="btn btn-danger">Chat verlassen</button>
+                                        <button name="logout" class="btn btn-danger">Logout</button>
+                                    </div>
                                 </form>
+
+
                                 <?php
                                 if (isset($_POST['logout'])) {
                                     $update_msg = mysqli_query($connection, "UPDATE benutzer SET log_in='Offline'
@@ -108,7 +119,7 @@ if (!isset($_SESSION['email'])) {
                                 $msg_date = $row['msg_date'];
 
 
-                            
+
 
 
                             ?>
@@ -143,57 +154,72 @@ if (!isset($_SESSION['email'])) {
                     </div>
                     <div class="row">
                         <div class="col-md-12 right-chat-textbox">
-                        <form id="messageForm">
-    <input autocomplete="off" type="text" name="msg_content" id="msg_content" placeholder="Schreib deine Nachricht..">
-    <button class="btn" type="button" onclick="sendMessage()"><i class="fa fa-telegram" aria-hidden="true"></i></button>
-</form>
+                            <div id="charCount" style="color: white; text-align: left;"></div>
 
+                            <form id="messageForm">
+                                <input autocomplete="off" type="text" name="msg_content" id="msg_content" placeholder="Schreib deine Nachricht..">
+                                <button class="btn" type="button" onclick="sendMessage()"><i class="fa fa-telegram" aria-hidden="true"></i></button>
+                            </form>
                         </div>
+
 
                     </div>
                 </div>
             </div>
         </div>
-    
+
         <script>
-    function sendMessage() {
-        var messageContent = $('#msg_content').val();
-        var sender = '<?php echo $user_name; ?>';  // Benutzer, der die Nachricht sendet
-    var receiver = '<?php echo $username; ?>';  // Benutzer, der die Nachricht empfängt
+            function sendMessage() {
+                var messageContent = $('#msg_content').val();
+                var sender = '<?php echo $user_name; ?>'; // Benutzer, der die Nachricht sendet
+                var receiver = '<?php echo $username; ?>'; // Benutzer, der die Nachricht empfängt
 
-        // Überprüfen, ob die Nachricht nicht leer ist
-        if (messageContent.trim() !== "") {
-            $.ajax({
-                type: "POST",
-                url: "send_message.php", // Ersetzen Sie dies durch den tatsächlichen Pfad zum PHP-Skript
-                data: {
-                    msg_content: messageContent,
-                    sender: sender,
-                receiver: receiver
-                },
-                success: function(response) {
-                    // Hier können Sie weitere Aktionen nach dem Senden durchführen, falls erforderlich
-                    console.log(response);
+                // Überprüfen, ob die Nachricht nicht leer ist
+                if (messageContent.trim() !== "") {
+                    $.ajax({
+                        type: "POST",
+                        url: "send_message.php", // Ersetzen Sie dies durch den tatsächlichen Pfad zum PHP-Skript
+                        data: {
+                            msg_content: messageContent,
+                            sender: sender,
+                            receiver: receiver
+                        },
+                        success: function(response) {
+                            // Hier können Sie weitere Aktionen nach dem Senden durchführen, falls erforderlich
+                            console.log(response);
 
-                    // Beispiel: Nachrichtenbereich aktualisieren
-                    $('#scrolling_to_bottom').load(location.href + ' #scrolling_to_bottom');
-                    
-                    // Oder nur das Textfeld löschen
-                    $('#msg_content').val('');
-                },
-                error: function(error) {
-                    console.error("Fehler beim Senden der Nachricht:", error);
+                            // Beispiel: Nachrichtenbereich aktualisieren
+                            $('#scrolling_to_bottom').load(location.href + ' #scrolling_to_bottom');
+
+                            // Oder nur das Textfeld löschen
+                            $('#msg_content').val('');
+                        },
+                        error: function(error) {
+                            console.error("Fehler beim Senden der Nachricht:", error);
+                        }
+                    });
+                } else {
+                    // Warnung, wenn das Nachrichtenfeld leer ist
+                    alert("Bitte geben Sie eine Nachricht ein!");
                 }
+            }
+
+            $(document).ready(function() {
+                var maxChars = 150; // Maximale Anzahl erlaubter Zeichen
+
+                $('#msg_content').on('input', function() {
+                    var currentChars = $(this).val().length;
+                    var remainingChars = maxChars - currentChars;
+
+                    if (remainingChars >= 0) {
+                        $('#charCount').text(remainingChars + ' Zeichen übrig');
+                    } else {
+                        var truncatedMsg = $(this).val().slice(0, maxChars);
+                        $(this).val(truncatedMsg);
+                    }
+                });
             });
-        } else {
-            // Warnung, wenn das Nachrichtenfeld leer ist
-            alert("Bitte geben Sie eine Nachricht ein!");
-        }
-    }
-</script>
 
-
-        <script>
             $('#scrolling_to_bottom').animate({
                 scrollTop: $('#scrolling_to_bottom').get(0).scrollHeight
             }, 1000);

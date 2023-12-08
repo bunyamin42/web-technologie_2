@@ -11,6 +11,28 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <title>Register</title>
+    <script>
+        $(document).ready(function () {
+            $("#passwort, #passwort2").on("input", function () {
+                var passwort = $("#passwort").val();
+                var passwort2 = $("#passwort2").val();
+
+                // Überprüfung des Passworts
+                if (passwort.length < 8) {
+                    $("#passwortError").text("Das Passwort muss mindestens 8 Zeichen lang sein.");
+                } else {
+                    $("#passwortError").text("");
+                }
+
+                // Überprüfung der Passwortbestätigung
+                if (passwort !== passwort2) {
+                    $("#passwort2Error").text("Die Passwörter stimmen nicht überein.");
+                } else {
+                    $("#passwort2Error").text("");
+                }
+            });
+        });
+    </script>
 
 </head>
 
@@ -18,45 +40,59 @@
     <div class="container">
         <div class="box form-box">
 
-            <?php
+        <?php
+    include("db_connection.php");
+    session_start();
 
-            include("db_connection.php");
-            if (isset($_POST['submit'])) {
-                if ($_POST['passwort'] != $_POST['passwort2']) {
+    if (isset($_POST['submit'])) {
+        $benutzername = $_POST['benutzername'];
+        $email = $_POST['email'];
+        $passwort = $_POST['passwort'];
+        $passwort2 = $_POST['passwort2'];
+
+        // Überprüfung, ob die Passwörter übereinstimmen
+        if ($passwort != $passwort2) {
+            echo "<div class='message'>
+                <p>Passwörter stimmen nicht überein, versuchen Sie es nochmal!</p>
+            </div> <br>";
+            echo "<a href='javascript:self.history.back()'><button class='btn'>Go Back</button>";
+        } else {
+            // Überprüfung der E-Mail-Adresse
+            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                echo "<div class='message'>
+                    <p>Ungültige E-Mail-Adresse, bitte geben Sie eine gültige E-Mail-Adresse ein!</p>
+                </div> <br>";
+                echo "<a href='javascript:self.history.back()'><button class='btn'>Go Back</button>";
+            } else {
+                // Überprüfung der Passwortlänge
+                if (strlen($passwort) < 8) {
                     echo "<div class='message'>
-                <p> Passwörte stimmen nicht überein, versuchen Sie es nochmal!</p>
-                 </div> <br>";
+                        <p>Das Passwort muss mindestens 8 Zeichen lang sein!</p>
+                    </div> <br>";
                     echo "<a href='javascript:self.history.back()'><button class='btn'>Go Back</button>";
                 } else {
-                    $benutzername = $_POST['benutzername'];
-                    $email = $_POST['email'];
-                    $passwort = $_POST['passwort'];
-                    $_SESSION['benutzername'] = $_POST['benutzername'];
-                    $_SESSION['email'] = $_POST['email'];
-                    $_SESSION['passwort'] = $_POST['passwort'];
-
-                    //verifying the unique email
-
+                    // Überprüfung, ob die E-Mail bereits verwendet wird
                     $verify_query = mysqli_query($connection, "SELECT email FROM benutzer WHERE email='$email'");
-
                     if (mysqli_num_rows($verify_query) != 0) {
                         echo "<div class='message'>
-                      <p>This email is used, Try another One Please!</p>
-                  </div> <br>";
+                            <p>Diese E-Mail-Adresse wird bereits verwendet. Bitte verwenden Sie eine andere E-Mail-Adresse.</p>
+                        </div> <br>";
                         echo "<a href='javascript:self.history.back()'><button class='btn'>Go Back</button>";
                     } else {
-
-                        mysqli_query($connection, "INSERT INTO benutzer(benutzername,passwort,email) VALUES('$benutzername','$passwort','$email')") or die("Error Occured");
+                        // Alle Überprüfungen erfolgreich, fügen Sie den Benutzer hinzu
+                        mysqli_query($connection, "INSERT INTO benutzer(benutzername, passwort, email) VALUES('$benutzername', '$passwort', '$email')") or die("Error Occured");
 
                         echo "<div class='message_success'>
-                      <p>Registration successfully!</p>
-                  </div> <br>";
-                        echo "<a href='login.php'><button class='btn'>Login Now</button>";
+                            <p>Registrierung erfolgreich!</p>
+                        </div> <br>";
+                        echo "<a href='login.php'><button class='btn'>Jetzt anmelden</button>";
                     }
                 }
-            } else {
+            }
+        }
+    } else{
+?>
 
-            ?>
                 <div class="form-header">
                 <header>Sign Up</header>
                 <h3 style="align-items: center; ">Fill out this form</h3><br>
@@ -73,21 +109,22 @@
 
                     <div class="field input">
                         <label id="input-value" for="email">Email</label>
-                        <input type="text" name="email" id="email" placeholder="Email" autocomplete="off" required>
+                        <input type="email" name="email" id="email" placeholder="Email" autocomplete="off" required>
                     </div>
-
                     <div class="field input">
-                        <label id="input-value" for="passwort">passwort</label>
-                        <input type="password" name="passwort" id="passwort" placeholder="Passwort" autocomplete="off" required>
-                    </div>
+                <label id="input-value" for="passwort">Passwort</label>
+                <input type="password" name="passwort" id="passwort" placeholder="Passwort" autocomplete="off" required>
+                <div id="passwortError" style="color: red;"></div>
+            </div>
 
-                    <div class="field input">
-                        <label id="input-value" for="passwort">Passwort Bestätigung</label>
-                        <input type="password" name="passwort2" id="passwort2" placeholder="Passwort" autocomplete="off" required>
-                    </div>
+            <div class="field input">
+                <label id="input-value" for="passwort2">Passwort Bestätigung</label>
+                <input type="password" name="passwort2" id="passwort2" placeholder="Passwort Bestätigung" autocomplete="off" required>
+                <div id="passwort2Error" style="color: red;"></div>
+            </div>
                     <div class="field input">
                         <label>Country</label>
-                        <select id="input-value"" name=" user_country" required>
+                        <select id="input-value" name=" user_country" required>
                             <option disabled="">Select a Country</option>
                             <option>Germany</option>
                             <option>France</option>
