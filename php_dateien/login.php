@@ -6,11 +6,11 @@
     // 1. Überprüfen Sie, ob das Cookie vorhanden ist.
     date_default_timezone_set('Europe/Berlin'); // Setzen Sie die entsprechende Zeitzone
 
-$cookie_name = "user_cookie";
-if (isset($_COOKIE[$cookie_name]) && time() < $_COOKIE[$cookie_name]) {
+
+if (isset($_COOKIE['user_cookie']) && time() < $_COOKIE['user_cookie']) {
     // Cookie ist noch gültig, leiten Sie den Benutzer zur Startseite weiter.
     header("Location: startseite.php");
-    exit();
+    die();
 }
 
 
@@ -53,7 +53,7 @@ if (isset($_COOKIE[$cookie_name]) && time() < $_COOKIE[$cookie_name]) {
                         $cookie_name = "user_cookie";
                         $cookie_value = $row['benutzer_id'];
                         $expiration_time = time() + (20 * 60); //Aktuelle Zeit + 20 Minuten, heißt, nach 20 Minuten soll Cookie gelöscht werden
-                        setcookie($cookie_name, $cookie_value, $expiration_time, "/");
+                        setcookie($cookie_name, $cookie_value, $expiration_time, "/", "", true, true);
                 
                         header("Location: startseite.php");
                         exit(); // Fügen Sie dies hinzu, um sicherzustellen, dass der Code nach dem Header nicht weiter ausgeführt wird

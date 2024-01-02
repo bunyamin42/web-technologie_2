@@ -7,7 +7,7 @@ if (!isset($_SESSION['email'])) {
 include("db_connection.php");
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    $user_id = 34;
+    $user_id = $_SESSION['user_id'];
 
     // Hole den JSON-String aus dem Eingabestrom
     $raw_data = file_get_contents("php://input");

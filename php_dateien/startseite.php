@@ -4,7 +4,7 @@ include("speichereBeitragDatenbank.php");
 include("session_handling.php");
 include("speichere_beitrag.php");
 
-if (!isset($_SESSION['email'])) {
+if (!isset($_SESSION['email']) && !isset($_COOKIE['user_cookie'])) {
     header("location: login.php");
 } else {
 

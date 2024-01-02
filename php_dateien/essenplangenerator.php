@@ -114,6 +114,8 @@ if (!isset($_SESSION['email'])) {
     // AJAX-Anfrage zum Speichern des Essensplans
     function saveMealPlan() {
   // Erhalte den Wochenplan-Daten als JSON-String
+  console.log("saveMealPlan() wurde aufgerufen.");
+
   var mealPlanDataToSave = mealPlanData;
   console.log("Daten", mealPlanDataToSave); 
 

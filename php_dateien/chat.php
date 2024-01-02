@@ -92,6 +92,13 @@ if (!isset($_SESSION['email'])) {
                                 if (isset($_POST['logout'])) {
                                     $update_msg = mysqli_query($connection, "UPDATE benutzer SET log_in='Offline'
                                     WHERE benutzername='$user_name'");
+                                    header("Location: logout.php");
+                                    exit();
+                                }
+
+                                if (isset($_POST['chat_verlassen'])) {
+                                    $update_msg = mysqli_query($connection, "UPDATE benutzer SET log_in='Offline'
+                                    WHERE benutzername='$user_name'");
                                     header("Location: startseite.php");
                                     exit();
                                 }
