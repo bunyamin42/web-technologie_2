@@ -36,7 +36,6 @@ vectorizer = TfidfVectorizer()
 # Vektorraum erstellen
 vectors = vectorizer.fit_transform([eingeloggter_benutzer_profil] + profile_texts)
 
-
 # Ähnlichkeitsmatrix aufbauen
 similarity_matrix = cosine_similarity(vectors)
 
@@ -44,14 +43,19 @@ similarity_matrix = cosine_similarity(vectors)
 similarities_with_logged_in_user = similarity_matrix[0][1:]
 
 # Benutzer-IDs sortiert nach Ähnlichkeit in absteigender Reihenfolge erhalten
-sorted_user_ids = np.argsort(similarities_with_logged_in_user)[::-1]
+sorted_user_ids = np.argsort(similarities_with_logged_in_user, kind='quicksort')[::-1]
 
 # Freundeempfehlung
 max_freundeempfehlung_size = 15
-freundeempfehlung_result = [benutzerprofile[i][0] for i in sorted_user_ids[:max_freundeempfehlung_size]]
 
-# Ausgabe der Freundeempfehlung
-print(json.dumps({"freundeempfehlung": freundeempfehlung_result}))
+# Freundeempfehlung mit Ähnlichkeitswerten erstellen
+freundeempfehlung_result_with_similarity = [
+    {"benutzer_id": benutzerprofile[i][0], "ähnlichkeitswert": similarities_with_logged_in_user[i]}
+    for i in sorted_user_ids[:max_freundeempfehlung_size] if similarities_with_logged_in_user[i] > 0  # Filtere Ähnlichkeitswerte > 0
+]
+
+# Ausgabe der Freundeempfehlung mit Ähnlichkeitswerten
+print(json.dumps({"freundeempfehlung": freundeempfehlung_result_with_similarity}))
 
 # Verbindung schließen
 cursor.close()

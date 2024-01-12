@@ -114,20 +114,19 @@ if (!isset($_SESSION['email'])) {
     // AJAX-Anfrage zum Speichern des Essensplans
     function saveMealPlan() {
   // Erhalte den Wochenplan-Daten als JSON-String
-  console.log("saveMealPlan() wurde aufgerufen.");
-
   var mealPlanDataToSave = mealPlanData;
   console.log("Daten", mealPlanDataToSave); 
 
   var xhr = new XMLHttpRequest();
   xhr.onreadystatechange = function() {
-    console.log("Ready state: " + this.readyState);
-    console.log("Status: " + this.status);
-    if (this.readyState == 4 && this.status == 200) {
-      // Zeige die Antwort (z.B., Erfolgsmeldung) an
-      alert("Erfolgreich gespeichert");
+    if (this.readyState == 4) {
+        if (this.status == 200) {
+            alert("Erfolgreich gespeichert");
+        } else {
+            alert("Fehler beim Speichern: " + this.statusText);
+        }
     }
-  };
+};
 
   xhr.open("POST", "saveMealPlan.php", true);
   xhr.setRequestHeader("Content-type", "application/json");

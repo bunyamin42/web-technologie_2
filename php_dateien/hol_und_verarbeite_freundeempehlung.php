@@ -20,26 +20,24 @@ $freundeempfehlung_json = shell_exec($cmd);
 $freundeempfehlung_data = json_decode($freundeempfehlung_json, true);
 $freundeempfehlung = $freundeempfehlung_data['freundeempfehlung'];
 
-if ($freundeempfehlung_json !== null) {
-    // Verarbeite die JSON-Daten
-    $freundeempfehlung_data = json_decode($freundeempfehlung_json, true);
+if (isset($freundeempfehlung_data['freundeempfehlung'])) {
+    $freundeempfehlung = $freundeempfehlung_data['freundeempfehlung'];
 
-   
-    if (isset($freundeempfehlung_data['freundeempfehlung'])) {
-        $freundeempfehlung = $freundeempfehlung_data['freundeempfehlung'];
-    
-        foreach($freundeempfehlung as $freundid){
-            $sql_freundid = "select * from benutzer where benutzer_id=$freundid";
-            $sql_result= mysqli_query($connection, $sql_freundid);
-            $result_assoc = mysqli_fetch_assoc($sql_result);
-            
-            $response['freundendaten'][] = $result_assoc;
-        }
-    } else {
-        $response['error'] = "Fehler: 'freundeempfehlung' nicht im JSON gefunden.";
+    foreach($freundeempfehlung as $freundinfo){
+        $freundid = $freundinfo['benutzer_id'];
+        $similarity = $freundinfo['ähnlichkeitswert'];
+
+        $sql_freundid = "SELECT * FROM benutzer WHERE benutzer_id = $freundid";
+        $sql_result = mysqli_query($connection, $sql_freundid);
+        $result_assoc = mysqli_fetch_assoc($sql_result);
+
+        // Füge den Ähnlichkeitswert zur Benutzerdatenliste hinzu
+        $result_assoc['ähnlichkeitswert'] = $similarity;
+
+        $response['freundendaten'][] = $result_assoc;
     }
 } else {
-    $response['error'] = "Fehler: Keine Daten von der Python-Datei erhalten.";
+    $response['error'] = "Fehler: 'freundeempfehlung' nicht im JSON gefunden.";
 }
 
 // Gib das Ergebnis als JSON zurück

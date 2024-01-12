@@ -16,12 +16,10 @@ function getMealData($connection) {
     }
 }
 
-// Datenbankabfrage für den Essensplan
 $mealData = getMealData($connection);
 
-// Überprüfen, ob Daten vorhanden sind
 if ($mealData) {
-    // Liniengrafik erstellen
+
     $proteins = [];
     $carbs = [];
     $fats = [];
@@ -31,14 +29,10 @@ if ($mealData) {
         $carbs[] = $data['nutrients']['carbohydrates'];
         $fats[] = $data['nutrients']['fat'];
     }
-
-    // Hier kannst du Code einfügen, um eine Liniengrafik zu erstellen
-    // Zum Beispiel mit einer Bibliothek wie Chart.js oder durch direkte Ausgabe von SVG oder HTML
-
-    // Beispiel mit Chart.js
     ?>
     <!DOCTYPE html>
     <html lang="en">
+
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -46,8 +40,11 @@ if ($mealData) {
         <!-- Chart.js einbinden -->
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     </head>
+
     <body>
-        <canvas id="myChart" width="400" height="400"></canvas>
+        <div style="text-align: center; margin-top: 20px;">
+            <canvas id="myChart"></canvas>
+        </div>
 
         <script>
             var ctx = document.getElementById('myChart').getContext('2d');
@@ -76,14 +73,21 @@ if ($mealData) {
                     }]
                 }
             });
+
+  
+            document.getElementById('myChart').style.width = '500px';
+            document.getElementById('myChart').style.height = '450px';
+          
+            document.getElementById('myChart').parentNode.style.width = '500px';
+            document.getElementById('myChart').parentNode.style.height = '450px';
         </script>
     </body>
+
     </html>
     <?php
 } else {
     echo "Keine Daten gefunden.";
 }
 
-// Verbindung schließen
 $connection->close();
 ?>
