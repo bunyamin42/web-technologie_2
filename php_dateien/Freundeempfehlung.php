@@ -70,7 +70,7 @@ include("header.php");
 <body>
     <nav class="nav nav-pills flex-column flex-sm-row">
         <a class="flex-sm-fill text-sm-center nav-link " href="freunde.php">Freundeliste</a>
-        <a class="flex-sm-fill text-sm-center nav-link" href="#">Freundschaftsanfragen</a>
+        <a class="flex-sm-fill text-sm-center nav-link" href="freundschaftsanfragen.php">Freundschaftsanfragen</a>
         <a class="flex-sm-fill text-sm-center nav-link " href="freunde_hinzufuegen.php">Freunde hinzufügen</a>
         <a class="flex-sm-fill text-sm-center nav-link active" href="Freundeempfehlung.php">Freundeempfehlung</a>
     </nav>

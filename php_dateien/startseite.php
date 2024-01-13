@@ -20,6 +20,52 @@ if (!isset($_SESSION['email']) && !isset($_COOKIE['user_cookie'])) {
         <title>Fitbook</title>
         <link rel="stylesheet" href="../style.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+        <style>
+        .right-sidebar {
+            background-color: #f0f0f0;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .chat-button {
+            display: flex;
+            align-items: center;
+            background-color: #404040;
+            color: #fff;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .chat-button:hover {
+            background-color: #555;
+        }
+
+        .chat-icon {
+            margin-right: 10px;
+        }
+        .werbebanner {
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #f0f0f0;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    display: flex; /* Flex-Container verwenden */
+    justify-content: center; /* In der Mitte ausrichten */
+    align-items: center; /* In der Mitte ausrichten */
+}
+
+.werbebanner img {
+    max-width: 70%; /* Ändere die maximale Breite nach Bedarf */
+    max-height: 70%; /* Ändere die maximale Höhe nach Bedarf */
+    height: auto; /* Automatische Anpassung der Höhe */
+}
+     
+    </style>
     </head>
 
     <body>
@@ -29,7 +75,12 @@ if (!isset($_SESSION['email']) && !isset($_COOKIE['user_cookie'])) {
                 <ui>
                     <li><img src="../images/email_icon.png"></li>
                     <li><img src="../images/glocke_icon.png"></li>
-                    <li><img src="../images/kalender_icon.png"></li>
+                    <a href="kalender.php">
+    <li>
+        <img src="../images/kalender_icon.png">
+    </li>
+</a>
+
                 </ui>
             </div>
             <div class="nav-right">
@@ -38,23 +89,24 @@ if (!isset($_SESSION['email']) && !isset($_COOKIE['user_cookie'])) {
                     <input type="text" placeholder="Suchen">
                 </div>
                 <div class="nav-profil-icon">
-                    <img src="../images/profil_icon.png" id="profile-icon">
-                    <script>
-                        document.getElementById("profile-icon").addEventListener("click", function() {
-                            window.location.href = "account_settings.php";
-                        });
-                    </script>
-                </div>
-                <div class="logout">
+    <i class="fas fa-user" id="profile-icon" style="font-size: 24px; color: #fff; cursor: pointer;"></i>
+    <script>
+        document.getElementById("profile-icon").addEventListener("click", function() {
+            window.location.href = "account_settings.php";
+        });
+    </script>
+</div>
 
-                    <span id="logoutText" class="logout-text">Abmelden</span>
-                    <img src="../images/abmelden_icon.png" id="abmelde_icon">
-                    </a>
-                    <script>
-                        document.getElementById("abmelde_icon").addEventListener("click", function() {
-                            window.location.href = "logout.php";
-                            
-                        });
+                <div class="logout">
+    <span id="logoutText" class="logout-text">Abmelden</span>
+    <i class="fas fa-sign-out-alt" id="abmelde_icon" style="font-size: 24px; color: white;"></i>
+</div>
+<script>
+    document.getElementById("abmelde_icon").addEventListener("click", function() {
+        window.location.href = "logout.php";
+    });
+</script>
+
                     </script>
                 </div>
 
@@ -69,6 +121,12 @@ if (!isset($_SESSION['email']) && !isset($_COOKIE['user_cookie'])) {
                     <a href="essenplangenerator.php"><img src="../images/wochenplanersteller_icon.png">Wochenplanerstellen</a>
                     <a href="kalorienrechner.php"><img src="../images/kalorien_icon.png">Kalorienrechner</a>
                     <a href="bmi_rechner.php"><i style="color: black; padding-left:2px; padding-right:12px; font-size: 20px " class="fa-solid fa-dumbbell"></i> BMI Rechner</a>
+                    <a href="kalender.php">
+    <i style="color: black; padding-left:2px; padding-right:12px; font-size: 20px " class="fa-solid fa-calendar"></i> Kalender
+</a>
+                    <a href="account_settings.php">
+    <i style="color: black; padding-left:2px; padding-right:12px; font-size: 20px " class="fa-solid fa-cog"></i> Einstellungen
+</a>
                     
 
                 </div>
@@ -109,14 +167,30 @@ if (!isset($_SESSION['email']) && !isset($_COOKIE['user_cookie'])) {
 
             <!-------------------right sidebar ------------------->
             <div class="right-sidebar">
-                <div class="sidebar-titel">
-                    <h4>Konversationen</h4>
-                    <a href="chat.php" onclick="updateUserStatus()">Chat</a>
-                </div>
-
-            </div>
+        <div class="sidebar-titel">
+            <h4>Konversationen</h4>
+            <button class="chat-button" onclick="updateUserStatus()">
+                <i class="fas fa-comments chat-icon"></i> Chat
+            </button>
         </div>
 
+        <!--  Werbebanner -->
+        <div class="werbebanner" id="werbebanner1">
+            <a href="https://www.mcfit.com/" target="_blank">
+                <img src="../images/mcfit_werbung.jpeg" alt="Werbung 1">
+            </a>
+        </div>
+        <div class="werbebanner" id="werbebanner2">
+            <a href="https://www.powerstar.de/sportnahrung-shop/de/" target="_blank">
+                <img src="../images/proteinshake.jpg" alt="Werbung 2">
+            </a>
+        </div>
+
+        <div class="werbebanner" id="werbebanner3">
+    <a href="https://www.clever-fit.com/de/" target="_blank">
+        <img src="../images/cleverfit.jpg" alt="Werbung 3">
+    </a>
+</div>
 
 
 
@@ -450,7 +524,7 @@ if (!isset($_SESSION['email']) && !isset($_COOKIE['user_cookie'])) {
 
             window.onload = function() {
                 zeigeBeiträge();
-
+              
             };
 
 
@@ -467,6 +541,21 @@ if (!isset($_SESSION['email']) && !isset($_COOKIE['user_cookie'])) {
                     button.innerText = "Beitrag erstellen";
                 }
             }
+
+            function wechsleWerbebanner() {
+        // Alle Werbebanner ausblenden
+        var alleWerbebanner = document.querySelectorAll('.werbebanner');
+        alleWerbebanner.forEach(function (banner) {
+            banner.style.display = 'none';
+        });
+
+        
+        var zufallsIndex = Math.floor(Math.random() * alleWerbebanner.length);
+        alleWerbebanner[zufallsIndex].style.display = 'block';
+    }
+
+    // Wechsle Werbebanner alle 8 Sekunden (8000 Millisekunden)
+    setInterval(wechsleWerbebanner, 5000);
         </script>
 
     </body>

@@ -6,7 +6,7 @@ include('db_connection.php');
 $loggedUserId = $_SESSION['benutzer_id'];
 
 // SQL-Abfrage für Freunde des eingeloggten Benutzers
-$sql = "SELECT benutzer.* FROM benutzer
+$sql = "SELECT Distinct benutzer.* FROM benutzer
         INNER JOIN freundschaft ON (benutzer.benutzer_id = freundschaft.fk_benutzer_id1 OR benutzer.benutzer_id = freundschaft.fk_benutzer_id2)
         WHERE (freundschaft.fk_benutzer_id1 = $loggedUserId OR freundschaft.fk_benutzer_id2 = $loggedUserId) AND freundschaft.status = 1";
 
@@ -72,7 +72,7 @@ $result = mysqli_query($connection, $sql);
 <body>
 <nav class="nav nav-pills flex-column flex-sm-row">
   <a class="flex-sm-fill text-sm-center nav-link active" aria-current="page" href="freunde.php">Freundeliste</a>
-  <a class="flex-sm-fill text-sm-center nav-link" href="#">Freundschaftsanfragen</a>
+  <a class="flex-sm-fill text-sm-center nav-link" href="freundschaftsanfragen.php">Freundschaftsanfragen</a>
   <a class="flex-sm-fill text-sm-center nav-link" href="freunde_hinzufuegen.php">Freunde hinzufügen</a>
   <a class="flex-sm-fill text-sm-center nav-link" href="Freundeempfehlung.php">Freundeempfehlung</a>
 </nav>

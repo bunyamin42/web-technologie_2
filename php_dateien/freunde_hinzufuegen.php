@@ -89,7 +89,7 @@ $result = mysqli_query($connection, $sql);
 <body>
     <nav class="nav nav-pills flex-column flex-sm-row">
         <a class="flex-sm-fill text-sm-center nav-link " href="freunde.php">Freundeliste</a>
-        <a class="flex-sm-fill text-sm-center nav-link" href="#">Freundschaftsanfragen</a>
+        <a class="flex-sm-fill text-sm-center nav-link" href="freundschaftsanfragen.php">Freundschaftsanfragen</a>
         <a class="flex-sm-fill text-sm-center nav-link active" href="freunde_hinzufuegen.php">Freunde hinzufügen</a>
         <a class="flex-sm-fill text-sm-center nav-link " href="Freundeempfehlung.php">Freundeempfehlung</a>
     </nav>
@@ -100,6 +100,43 @@ $result = mysqli_query($connection, $sql);
 
     <?php
     if ($result && mysqli_num_rows($result) > 0) {
+        echo "<script>
+            var friendList = document.getElementById('friendList');
+
+            function onUserPlusClick(friendId) {
+                console.log('Freund hinzufügen: ', friendId);
+
+                var xhr = new XMLHttpRequest();
+
+                xhr.open('POST', 'freundschaftsanfrage_abschicken.php', true);
+                xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+                xhr.onload = function() {
+                    if (xhr.status >= 200 && xhr.status < 300) {
+                        var response = xhr.responseText;
+                        if (response === 'success') {
+                            console.log('Freundschaftsanfrage abgeschickt!');
+                            alert('Freundschaftsanfrage abgeschickt!');
+                            location.reload();
+                        } else {
+                            console.error('Fehler bei der AJAX-Anfrage Freundehinzufügen: ', response);
+                            alert('Fehler bei der AJAX-Anfrage Freundehinzufügen: ' + response);
+                        }
+                    } else {
+                        console.error('Fehler bei der AJAX-Anfrage Freundehinzufügen: ', xhr.statusText);
+                        alert('Fehler bei der AJAX-Anfrage Freundehinzufügen: ' + xhr.statusText);
+                    }
+                };
+
+                xhr.onerror = function() {
+                    console.error('Fehler bei der AJAX-Anfrage.');
+                    alert('Fehler bei der AJAX-Anfrage.');
+                };
+
+                xhr.send('friendID=' + encodeURIComponent(friendId));
+            }
+        </script>";
+
         while ($row = mysqli_fetch_assoc($result)) {
             $friendId = $row['benutzer_id'];
             $friendUsername = $row['benutzername'];
@@ -112,15 +149,13 @@ $result = mysqli_query($connection, $sql);
                 ]);
 
                 echo "<script>
-                var friendList = document.getElementById('friendList');
-                var friendItem = document.createElement('div');
-                friendItem.classList.add('friendItem', 'col-12', 'mb-0'); 
-                var friendId = $friendId; // Benutze die Variable $friendId
-                var friendData = $friendData;
-                friendItem.innerHTML = '<div class=\"row\"><div class=\"col-1\" style=\"margin-right: 4%;\"><img src=\"' + friendData.friendProfilePic + '\" alt=\"' + friendData.friendUsername + '\'s Profilbild\" class=\"rounded-circle\"></div><div  class=\"col d-flex align-items-center\"><div class=\"icons\"><b>' + friendData.friendUsername + '</b></div><div class=\"icons\"><a href=\"/Projekt%20FitBook/Web-Technologie-Projektarbeit%20-%20Kopie%20(2)/php_dateien/profile.php?user_id=' + encodeURIComponent(friendId) + '\" title=\"Userprofil\" style=\"margin-left: 10px;\" class=\"fa-solid fa-user\"></a><i class=\"fa-solid fa-user-plus\" style=\"margin-left: 10px;\"></i></div></div></div>';
-                friendList.appendChild(friendItem);
-            </script>";
-            
+                    var friendItem = document.createElement('div');
+                    friendItem.classList.add('friendItem', 'col-12', 'mb-0'); 
+                    var friendId = $friendId;
+                    var friendData = $friendData;
+                    friendItem.innerHTML = '<div class=\"row\"><div class=\"col-1\" style=\"margin-right: 4%;\"><img src=\"' + friendData.friendProfilePic + '\" alt=\"' + friendData.friendUsername + '\'s Profilbild\" class=\"rounded-circle\"></div><div  class=\"col d-flex align-items-center\"><div class=\"icons\"><b>' + friendData.friendUsername + '</b></div><div class=\"icons\"><a href=\"/Projekt%20FitBook/Web-Technologie-Projektarbeit%20-%20Kopie%20(2)/php_dateien/profile.php?user_id=' + encodeURIComponent(friendId) + '\" title=\"Userprofil\" style=\"margin-left: 10px;\" class=\"fa-solid fa-user\"></a><i class=\"fa-solid fa-user-plus\" style=\"margin-left: 10px; cursor: pointer;\" onclick=\"onUserPlusClick(' + friendId + ')\"></i></div></div></div>';
+                    friendList.appendChild(friendItem);
+                </script>";
             }
         }
     }
