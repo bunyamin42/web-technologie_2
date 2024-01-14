@@ -7,7 +7,7 @@
 }
 body{
     background: #e4e9f7;
-    background-image: url("images/background_pic.jpg");
+    background-image: url("images/hintergrundbild_fitness.webp");
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
@@ -406,8 +406,10 @@ nav ul li {
 }
 
 .kommentare {
-    margin-top: 10px;
-    /* display: none; Anfangs ausgeblendet */
+    border: 1px solid #eee;
+        border-radius: 5px;
+        margin-top: 10px;
+        padding: 10px;
 }
 
 .kommentar {

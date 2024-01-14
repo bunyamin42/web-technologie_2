@@ -9,6 +9,11 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <style>
+          body {
+        background-size: cover;
+   
+  
+    }
         #buttonsContainer {
             text-align: center;
             margin-top: 20px;
@@ -29,16 +34,23 @@
             margin-top: 15px;
             font-size: 18px;
         }
-
+        .noMealPlanBackground {
+        background-image: url("../images/hintergrund_2.JFIF");
+      
+    }
         #noMealPlanMessage {
-            text-align: center;
-            font-size: 50px;
-            font-weight: bold;
-            margin-top: 50px;
-            white-space: nowrap; 
-            overflow: hidden; 
-            animation: moveRight 10s infinite, changeColor 10s infinite;
-        }
+    text-align: center;
+    font-size: 50px;
+    font-weight: bold;
+    margin-top: 50px;
+    white-space: nowrap; 
+    overflow: hidden; 
+    animation: moveRight 10s infinite, changeColor 10s infinite;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
 
         @keyframes moveRight {
             0% {
@@ -151,6 +163,7 @@ if (!isset($_SESSION['email'])) {
 
     if ($result) {
         if (mysqli_num_rows($result) == 0) {
+            echo '<body class="noMealPlanBackground">';
             echo '<div id="noMealPlanMessage">Kein Wochenessensplan vorhanden!</div>';
         } else {
             while ($row = mysqli_fetch_assoc($result)) {

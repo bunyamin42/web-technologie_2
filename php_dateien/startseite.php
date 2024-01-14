@@ -64,7 +64,35 @@ if (!isset($_SESSION['email']) && !isset($_COOKIE['user_cookie'])) {
     max-height: 70%; /* Ändere die maximale Höhe nach Bedarf */
     height: auto; /* Automatische Anpassung der Höhe */
 }
-     
+#cookie-banner {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 15px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            display: none;
+        }
+
+        #cookie-banner-content {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        #cookie-banner button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px;
+        }
+        .left-sidebar .imp-links a {
+        font-weight: bold; /* Oder 700, um die fett zu machen */
+    }
     </style>
     </head>
 
@@ -164,7 +192,15 @@ if (!isset($_SESSION['email']) && !isset($_COOKIE['user_cookie'])) {
                 </div>
 
             </div>
-
+ <!-- Cookie-Banner -->
+ <div id="cookie-banner">
+        <div id="cookie-banner-content">
+            <p>Diese Webseite verwendet Cookies...</p>
+            <p>Sie können diese Einwilligung jederzeit durch Anklicken des Symbols unten links auf unserer Website widerrufen oder ändern.</p>
+            <button id="accept-cookies">Nur notwendige Cookies verwenden</button>
+            <button id="accept-all-cookies">Alle Cookies zulassen</button>
+        </div>
+    </div>
             <!-------------------right sidebar ------------------->
             <div class="right-sidebar">
         <div class="sidebar-titel">
@@ -174,23 +210,19 @@ if (!isset($_SESSION['email']) && !isset($_COOKIE['user_cookie'])) {
             </button>
         </div>
 
-        <!--  Werbebanner -->
-        <div class="werbebanner" id="werbebanner1">
-            <a href="https://www.mcfit.com/" target="_blank">
-                <img src="../images/mcfit_werbung.jpeg" alt="Werbung 1">
-            </a>
-        </div>
-        <div class="werbebanner" id="werbebanner2">
-            <a href="https://www.powerstar.de/sportnahrung-shop/de/" target="_blank">
-                <img src="../images/proteinshake.jpg" alt="Werbung 2">
-            </a>
-        </div>
+        <!-- Werbebanner -->
+<?php
+$sql = "SELECT * FROM werbung ORDER BY RAND() LIMIT 3"; // Ändern Sie die LIMIT-Anzahl, wenn Sie mehr Werbebanner haben
+$result = mysqli_query($connection, $sql);
 
-        <div class="werbebanner" id="werbebanner3">
-    <a href="https://www.clever-fit.com/de/" target="_blank">
-        <img src="../images/cleverfit.jpg" alt="Werbung 3">
-    </a>
-</div>
+while ($row = mysqli_fetch_assoc($result)) {
+    echo '<div class="werbebanner">';
+    echo '<a href="' . $row['link'] . '" target="_blank">';
+    echo '<img src="' . $row['bildpfad'] . '" alt="Werbung">';
+    echo '</a>';
+    echo '</div>';
+}
+?>
 
 
 
@@ -524,6 +556,7 @@ if (!isset($_SESSION['email']) && !isset($_COOKIE['user_cookie'])) {
 
             window.onload = function() {
                 zeigeBeiträge();
+                 wechsleWerbebanner();
               
             };
 
@@ -542,20 +575,39 @@ if (!isset($_SESSION['email']) && !isset($_COOKIE['user_cookie'])) {
                 }
             }
 
-            function wechsleWerbebanner() {
-        // Alle Werbebanner ausblenden
-        var alleWerbebanner = document.querySelectorAll('.werbebanner');
-        alleWerbebanner.forEach(function (banner) {
-            banner.style.display = 'none';
+           // Wechsle Werbebanner alle 5 Sekunden (5000 Millisekunden)
+setInterval(wechsleWerbebanner, 5000);
+
+function wechsleWerbebanner() {
+    // Alle Werbebanner ausblenden
+    var alleWerbebanner = document.querySelectorAll('.werbebanner');
+    alleWerbebanner.forEach(function (banner) {
+        banner.style.display = 'none';
+    });
+
+    // Zufällig einen Werbebanner auswählen und anzeigen
+    var zufallsIndex = Math.floor(Math.random() * alleWerbebanner.length);
+    alleWerbebanner[zufallsIndex].style.display = 'block';
+}
+const cookiePreferences = localStorage.getItem('cookiePreferences');
+        if (!cookiePreferences) {
+            // Zeige das Cookie-Banner, wenn der Benutzer noch keine Auswahl getroffen hat
+            document.getElementById('cookie-banner').style.display = 'block';
+        }
+
+        // Event Listener für die Buttons im Cookie-Banner
+        document.getElementById('accept-cookies').addEventListener('click', () => {
+            // Hier kannst du die notwendigen Cookie-Präferenzen setzen
+            localStorage.setItem('cookiePreferences', 'necessary');
+            document.getElementById('cookie-banner').style.display = 'none';
         });
 
-        
-        var zufallsIndex = Math.floor(Math.random() * alleWerbebanner.length);
-        alleWerbebanner[zufallsIndex].style.display = 'block';
-    }
+        document.getElementById('accept-all-cookies').addEventListener('click', () => {
+            // Hier kannst du alle Cookies zulassen
+            localStorage.setItem('cookiePreferences', 'all');
+            document.getElementById('cookie-banner').style.display = 'none';
+        });
 
-    // Wechsle Werbebanner alle 8 Sekunden (8000 Millisekunden)
-    setInterval(wechsleWerbebanner, 5000);
         </script>
 
     </body>
