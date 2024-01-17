@@ -68,58 +68,63 @@ if (!isset($_SESSION['email'])) {
                         </tr>
             </table>
         </form>
-            <?php 
-                if(isset($_POST['change'])){
-                    $c_pass = $_POST['current_pass'];
-                    $pass1 = $_POST['u_pass1'];
-                    $pass2 = $_POST['u_pass2'];
-                    
-                    $user = $_SESSION['email'];
-                    $get_user = "select * from benutzer where email='$user'";
-                    $run_user = mysqli_query($connection, $get_user);
-                    $row = mysqli_fetch_array($run_user);
-            
-                    $user_password= $row['passwort'];
+        <?php
+if (isset($_POST['change'])) {
+    $c_pass = $_POST['current_pass'];
+    $pass1 = $_POST['u_pass1'];
+    $pass2 = $_POST['u_pass2'];
+
+    $user = $_SESSION['email'];
+    $get_user = "SELECT * FROM benutzer WHERE email='$user'";
+    $run_user = mysqli_query($connection, $get_user);
+    $row = mysqli_fetch_array($run_user);
+
+    $user_password_hashed = $row['passwort'];
+
+    // Verify the current password
+    if (!password_verify($c_pass, $user_password_hashed)) {
+        echo "
+            <div class='alert alert-danger' role='alert'>
+                <strong>Your Old password didn't match</strong>
+            </div>
+        ";
+    } elseif ($pass1 != $pass2) {
+        echo "
+            <div class='alert alert-danger' role='alert'>
+                <strong>Your New password didn't match with the confirm password</strong>
+            </div>
+        ";
+    } elseif (strlen($pass1) < 9) {
+        echo "
+            <div class='alert alert-danger' role='alert'>
+                <strong>Your password should be 9 or more characters</strong>
+            </div>
+        ";
+    } else {
+        // Hash the new password
+        $hashed_password = password_hash($pass1, PASSWORD_DEFAULT);
+
+        // Update the hashed password in the database
+        $update_pass = mysqli_query($connection, "UPDATE benutzer SET passwort='$hashed_password' WHERE email='$user'");
+
+        if ($update_pass) {
+            echo "
+                <div class='alert alert-success' role='alert'>
+                    <strong>Passwort wurde geändert</strong>
+                </div>
+            ";
+        } else {
+            echo "
+                <div class='alert alert-danger' role='alert'>
+                    <strong>Error updating password</strong>
+                </div>
+            ";
+        }
+    }
+}
+?>
 
 
-                    if($c_pass !==$user_password){
-                        echo"
-                        <divclass='alert alert-danger' role='alert'>
-                            <strong> Your Old password didnt match</strong>
-                        </div>
-                        ";
-                    }
-                    if($pass1 !=$pass2){
-                        echo"
-                        <div class='alert alert-danger' role='alert'>
-                            <strong> Your New password didnt match with confirm password</strong>
-                        </div>
-                        ";
-                    }
-                    
-                    if($pass1 < 9 AND $pass2 < 9){
-                        echo"
-                        <div class=class='alert alert-danger' role='alert'>
-                            <strong> Your 9 or more than 9 characters</strong>
-                        </div>
-                        ";
-
-                    }
-
-                    if($pass1 == $pass2 AND $c_pass == $user_password){
-                        $update_pass = mysqli_query($connection, "UPDATE benutzer SET passwort='$pass1' WHERE email='$user'");
-
-                        echo"
-                        <div class='alert alert-success' role='alert'>
-                            <strong>Passwort wurde geändert </strong>
-                        </div>
-                        ";
-                    }
-
-                    
-                }
-
-            ?>
         </div>
         <div class="col-sm-2">
 

@@ -1,4 +1,5 @@
 <?php 
+
     if (session_status() == PHP_SESSION_NONE) {
         session_start();
     }
@@ -28,6 +29,22 @@ if (isset($_COOKIE['user_cookie']) && time() < $_COOKIE['user_cookie']) {
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="../style.css">
     <title>Login</title>
+
+    <style>
+        body {
+            background-image: url('hintergrund/<?php echo rand(1, 7); ?>.jpg'); 
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+    </style>
 </head>
 <body>
     <div class="container">
@@ -35,42 +52,50 @@ if (isset($_COOKIE['user_cookie']) && time() < $_COOKIE['user_cookie']) {
             <?php 
                 include("db_connection.php");
                 if (isset($_POST['submit'])) {
-                    include("db_connection.php");
                     $email = mysqli_real_escape_string($connection, $_POST['email']);
                     $passwort = mysqli_real_escape_string($connection, $_POST['passwort']);
-                    $result = mysqli_query($connection, "SELECT * FROM benutzer WHERE email='$email' AND passwort='$passwort' ") or die("Error, not correct");
-                    $row = mysqli_fetch_assoc($result);
                 
-                    if (is_array($row) && !empty($row)) {
-                        // Update last activity and set log_in to 'Online'
-                        $update_last_activity = "UPDATE benutzer SET last_activity = NOW(), log_in = 'Online' WHERE benutzer_id = {$row['benutzer_id']}";
-                        mysqli_query($connection, $update_last_activity);
+                    $result = mysqli_query($connection, "SELECT * FROM benutzer WHERE email='$email'") or die("Error, not correct");
                 
-                        $_SESSION['email'] = $row['email'];
-                        $_SESSION['benutzername'] = $row['benutzername'];
-                        $_SESSION['user_id'] = $row['benutzer_id'];
+                    if ($row = mysqli_fetch_assoc($result)) {
+                      
+                       
+                        if (password_verify($passwort, $row['passwort'])) {
+                           
+                            $update_last_activity = "UPDATE benutzer SET last_activity = NOW(), log_in = 'Online' WHERE benutzer_id = {$row['benutzer_id']}";
+                            mysqli_query($connection, $update_last_activity);
                 
-                        $cookie_name = "user_cookie";
-                        $cookie_value = $row['benutzer_id'];
-                        $expiration_time = time() + (20 * 60); //Aktuelle Zeit + 20 Minuten, heißt, nach 20 Minuten soll Cookie gelöscht werden
-                        setcookie($cookie_name, $cookie_value, $expiration_time, "/", "", true, true);
+                            $_SESSION['email'] = $row['email'];
+                            $_SESSION['benutzername'] = $row['benutzername'];
+                            $_SESSION['user_id'] = $row['benutzer_id'];
                 
-                        header("Location: startseite.php");
-                        exit(); // Fügen Sie dies hinzu, um sicherzustellen, dass der Code nach dem Header nicht weiter ausgeführt wird
+                            // Cookie-Wert auf die Benutzer-ID setzen
+                            $cookie_name = "user_cookie";
+                            $cookie_value = $row['benutzer_id'];
+                            $expiration_time = time() + (20 * 60); // Aktuelle Zeit + 20 Minuten
+                            setcookie($cookie_name, $cookie_value, $expiration_time, "/", "", true, true);
+                
+                            header("Location: startseite.php");
+                            exit();
+                        } else {
+                            echo "<div class='message'>
+                                    <p>Falscher Benutzername oder Passwort, versuche es nochmal!</p>
+                                  </div> <br>";
+                            echo "<a href='login.php'><button class='btn'>Go Back</button>";
+                        }
                     } else {
                         echo "<div class='message'>
                                 <p>Falscher Benutzername oder Passwort, versuche es nochmal!</p>
                               </div> <br>";
                         echo "<a href='login.php'><button class='btn'>Go Back</button>";
                     }
-                }
-                else {
+                } else {
             ?>
              <div class="form-header">
              <header>FitBook</header>
             <h3>Login</h3>
             </div>
-            <form action="" method="post">
+            <form action="login.php" method="post">
                 <div class="field input">
                     <label id="input-value" for="email" >Email</label>
                     <input  type="email" name="email" id="email" placeholder="someone@hotmail.de" autocomplete="on"  required>

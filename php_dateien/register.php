@@ -43,13 +43,15 @@
         <?php
     include("db_connection.php");
     session_start();
-
     if (isset($_POST['submit'])) {
         $benutzername = $_POST['benutzername'];
         $email = $_POST['email'];
         $passwort = $_POST['passwort'];
         $passwort2 = $_POST['passwort2'];
-
+        $user_country = $_POST['user_country'];
+        $user_gender = $_POST['user_gender'];
+        
+    
         // Überprüfung, ob die Passwörter übereinstimmen
         if ($passwort != $passwort2) {
             echo "<div class='message'>
@@ -79,9 +81,12 @@
                         </div> <br>";
                         echo "<a href='javascript:self.history.back()'><button class='btn'>Go Back</button>";
                     } else {
+                        // Passwort hashen, bevor es in die Datenbank eingefügt wird
+                        $hashed_password = password_hash($passwort, PASSWORD_DEFAULT);
+    
                         // Alle Überprüfungen erfolgreich, fügen Sie den Benutzer hinzu
-                        mysqli_query($connection, "INSERT INTO benutzer(benutzername, passwort, email) VALUES('$benutzername', '$passwort', '$email')") or die("Error Occured");
-
+                        mysqli_query($connection, "INSERT INTO benutzer(benutzername, passwort, email, user_country, user_gender) VALUES('$benutzername', '$hashed_password', '$email', '$user_country', '$user_gender')") or die("Error Occured");
+    
                         echo "<div class='message_success'>
                             <p>Registrierung erfolgreich!</p>
                         </div> <br>";
@@ -90,14 +95,14 @@
                 }
             }
         }
-    } else{
+    } else {
 ?>
 
                 <div class="form-header">
                 <header>Sign Up</header>
                 <h3 style="align-items: center; ">Fill out this form</h3><br>
                 </div>
-                <form action="" method="post">
+                <form action="register.php" method="post">
                     <div class="form-header">
 
 

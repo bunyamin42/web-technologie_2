@@ -36,17 +36,19 @@
         <option value="1.9">Extrem aktiv (sehr harter Sport & körperliche Arbeit)</option>
       </select>
     </div>
-    <button type="button" class="btn btn-primary" onclick="calculateCalories()">Berechnen</button>
+    <button type="button" class="btn btn-primary" name="submit" onclick="calculateCalories()">Berechnen</button>
   </form>
 
-  <div class="mt-3">
+ 
+  <div class="mt-3" id="resultSection" style="display: none;">
     <h4>Ergebnis:</h4>
-    <p id="result">Das Ergebnis wird hier angezeigt.</p>
+    <p id="result"></p>
   </div>
 </div>
 
 <script>
   function calculateCalories() {
+    document.getElementById('resultSection').style.display = 'block';
     var food = document.getElementById('food').value;
     var caloriesPer100g = parseFloat(document.getElementById('calories').value);
     var amount = parseFloat(document.getElementById('amount').value);

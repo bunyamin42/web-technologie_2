@@ -20,6 +20,7 @@ if (!isset($_SESSION['email']) && !isset($_COOKIE['user_cookie'])) {
         <title>Fitbook</title>
         <link rel="stylesheet" href="../style.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
         <style>
         .right-sidebar {
             background-color: #f0f0f0;
@@ -93,6 +94,41 @@ if (!isset($_SESSION['email']) && !isset($_COOKIE['user_cookie'])) {
         .left-sidebar .imp-links a {
         font-weight: bold; /* Oder 700, um die fett zu machen */
     }
+
+    #filter-form {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+          margin-right: 20px;
+        padding: 8px;
+
+    }
+
+    #filter-form label {
+        margin-right: 8px;
+        
+    }
+
+    #filter-form select {
+        padding: 5px;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+    }
+
+    #filter-form button {
+        padding: 8px 12px;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    #filter-form button:hover {
+        background-color:#555
+    }
+    
+ 
+</style>
     </style>
     </head>
 
@@ -164,28 +200,31 @@ if (!isset($_SESSION['email']) && !isset($_COOKIE['user_cookie'])) {
             <!-- HTML für Toast-Benachrichtigung -->
 
             <div class="toast" id="toast"></div>
-            <form id="filter-form" action="alle_beitraege_anzeigen.php" method="post">
-                <label for="sortierung">Sortieren nach:</label>
-                <select name="sortierung" id="sortierung">
-                    <option value="aufsteigend">Aufsteigend</option>
-                    <option value="absteigend">Absteigend</option>
-                </select>
+<div class="main-content">
+<form id="filter-form">
+            <label for="sortierung" ></label>
+            <button type="button" class="btn btn-secondary" style="margin-right: 3px; margin-top: 2px;" onclick="applyFilter()">Filter anwenden</button>
+            <select name="sortierung" id="sortierung">
+                <option value="aufsteigend">Aufsteigend</option>
+                <option value="absteigend">Absteigend</option>
+            </select>
+           
+        </form>
+    <div class="beitragerstellen_button">
+        <!-- Anpassungen am Filter-Formular -->
+    
 
-                <button type="button" onclick="applyFilter()">Filter anwenden</button>
-            </form>
+        <button id="beitrag-erstellen-button" class="btn btn-secondary" onclick="anzeigenBeitragFormular()">Beitrag erstellen</button>
+    </div>
 
-            <div class="main-content">
-                <div class="beitragerstellen_button">
-                    <button id="beitrag-erstellen-button" onclick="anzeigenBeitragFormular()">Beitrag erstellen</button>
-                </div>
+    <div id="post-formular" style="display: none;">
+        <form id="posten-form">
+            <textarea id="post-text" placeholder="Schreibe deinen Beitrag..."></textarea>
+            <button type="button" class="btn btn-secondary" onclick="posten()">Push</button>
+        </form>
+    </div>
 
 
-                <div id="post-formular" style="display: none;">
-                    <form id="posten-form">
-                        <textarea id="post-text" placeholder="Schreibe deinen Beitrag..."></textarea>
-                        <button type="button" onclick="posten()">Push</button>
-                    </form>
-                </div>
 
                 <div id="beitraege">
                     <!-- Hier werden die Beiträge angezeigt -->
@@ -205,7 +244,7 @@ if (!isset($_SESSION['email']) && !isset($_COOKIE['user_cookie'])) {
             <div class="right-sidebar">
         <div class="sidebar-titel">
             <h4>Konversationen</h4>
-            <button class="chat-button" onclick="updateUserStatus()">
+            <button class="chat-button"  onclick="updateUserStatus(); redirectToChat();">
                 <i class="fas fa-comments chat-icon"></i> Chat
             </button>
         </div>
@@ -228,8 +267,20 @@ while ($row = mysqli_fetch_assoc($result)) {
 
 
         <script>
+
+function liveUpdate() {
+        zeigeBeiträge(); 
+        ladeKommentare(); 
+    }
+    setInterval(liveUpdate, 10000);
+
+            function redirectToChat() {
+      
+        window.location.href = "chat.php"; 
+    }
+
             function updateUserStatus() {
-                // Wenn der User auf Chat klickt, ändert sich sein Status von Offline auf Online
+             
                 var xhr = new XMLHttpRequest();
                 xhr.onreadystatechange = function() {
                     if (xhr.readyState == 4 && xhr.status == 200) {
@@ -310,11 +361,14 @@ while ($row = mysqli_fetch_assoc($result)) {
                 var xhr = new XMLHttpRequest();
                 xhr.onreadystatechange = function() {
                     if (xhr.readyState == 4 && xhr.status == 200) {
-                        // Verarbeite die JSON-Daten
+                       
                         var beiträge = JSON.parse(xhr.responseText);
-                        // Rufe die Funktion auf, um die Beiträge anzuzeigen
+                        beiträge.sort(function(a, b) {
+                return sortierungValue == 'aufsteigend' ? a.Benutzer.localeCompare(b.Benutzer) : b.Benutzer.localeCompare(a.Benutzer);
+            });
+
                         anzeigenBeiträge(beiträge);
-                        // Nachdem die Beiträge geladen wurden, rufe die Funktion auf, um die Kommentare zu laden
+                      
                         ladeKommentare();
                     }
                 };
