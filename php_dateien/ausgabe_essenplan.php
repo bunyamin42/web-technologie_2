@@ -15,6 +15,7 @@ function createWeeklyMealPlan($apiKey, $timeFrame = "week", $targetCalories = 20
 
   // API-Anfrage ausführen
   $response = file_get_contents($url);
+ 
 
   // Antwort als JSON-Objekt decodieren
   $json = json_decode($response, true);
